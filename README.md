@@ -20,12 +20,12 @@ USAGE:
 
 1. Create the database
 
-     > python create_db.py
+     python create_db.py
 
 2. Parse the log files (this could be run as a cron job)
 
-     > parselogs --files logdir/*.log*
+     parselogs --files logdir/*.log*
 
 3. Get the counts
 
-     > countdownloads
+     countdownloads
