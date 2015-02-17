@@ -5,12 +5,16 @@
 # Copyright (c) 2015 Jonathan M. Cameron
 # License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 
+import os
 import argparse
 import fileinput
 import sqlite3
 
 from Downloads import downloads
 
+# Get the filename
+db_file_dir = os.environ.get('COUNT_DOWNLOADS_DB_PATH', '.')
+database_filename = os.path.join(db_file_dir, 'downloads.db')
 
 # Set up the arguments
 parser = argparse.ArgumentParser()
@@ -52,7 +56,7 @@ for file in args.files:
                 print "%s  %15s %s %3d %d" % (filename, host, stime, status, fsize)
 
 # Set up the database
-conn = sqlite3.connect("downloads.db")
+conn = sqlite3.connect(database_filename)
 cursor = conn.cursor()
 
 print "Processing %d downloads" % len(file_downloads)

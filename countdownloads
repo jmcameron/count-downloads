@@ -5,9 +5,12 @@
 # Copyright (c) 2015 Jonathan M. Cameron
 # License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 
+import os
 import argparse
 import sqlite3
 
+db_file_dir = os.environ.get('COUNT_DOWNLOADS_DB_PATH', '.')
+database_filename = os.path.join(db_file_dir, 'downloads.db')
 
 # Set up the arguments
 parser = argparse.ArgumentParser()
@@ -15,7 +18,7 @@ parser = argparse.ArgumentParser()
 args = parser.parse_args()
 
 # Set up the database
-conn = sqlite3.connect("downloads.db")
+conn = sqlite3.connect(database_filename)
 cursor = conn.cursor()
 
 # Step 1 - Get the unique filenames
