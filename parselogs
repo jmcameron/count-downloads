@@ -1,0 +1,67 @@
+#!/usr/bin/python
+#
+# By: Jonathan M. Cameron
+#
+# Copyright (c) 2015 Jonathan M. Cameron
+# License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+
+import argparse
+import fileinput
+import sqlite3
+
+from Downloads import downloads
+
+
+# Set up the arguments
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--files", nargs='+', type=str, help="log filenames", default=None)
+parser.add_argument("--verbose", help="verbose")
+
+args = parser.parse_args()
+
+if args.files is None:
+    raise RuntimeError("Must specify log filenames (using --files option)")
+
+# Create the parser
+log_parser = downloads([r'.*/([a-zA-Z0-9-_\.]+\.zip)'])
+
+file_downloads = {}
+
+for file in args.files:
+    for line in fileinput.input(file):
+        data = log_parser.parse(line)
+        if 'filename' in data and data['filename']:
+            filename = data['filename']
+            host = data['remote_host']
+            dtime = data['time_received_datetimeobj']
+            stime = dtime.strftime('%Y-%m-%d %H:%M:%S')
+            status = int(data['status'])
+            fsize = int(data['response_bytes_clf'])
+            key = host + ' ' + stime
+            if key not in file_downloads:
+                file_downloads[key] = { 'filename' : filename,
+                                        'host' : host,
+                                        'time' : stime,
+                                        'size' : fsize }
+            else:
+                if args.verbose:
+                    print "Ignoring duplicate for ", key
+
+            if args.verbose:
+                print "%s  %15s %s %3d %d" % (filename, host, stime, status, fsize)
+
+# Set up the database
+conn = sqlite3.connect("downloads.db")
+cursor = conn.cursor()
+
+print "Processing %d downloads" % len(file_downloads)
+
+for key, vals in file_downloads.items():
+    # This syntax will insert the record if the key is unique and quietly ignore it if it is a duplicate
+    query = "INSERT OR IGNORE INTO downloads(key, filename, host, time, size) VALUES('%s', '%s', '%s', '%s', '%d')" % ( 
+        key, vals['filename'], vals['host'], vals['time'], vals['size'] )
+    cursor.execute(query)
+
+conn.commit()
+conn.close()

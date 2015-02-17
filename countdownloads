@@ -1,0 +1,41 @@
+#!/usr/bin/python
+#
+# By: Jonathan M. Cameron
+#
+# Copyright (c) 2015 Jonathan M. Cameron
+# License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+
+import argparse
+import sqlite3
+
+
+# Set up the arguments
+parser = argparse.ArgumentParser()
+
+args = parser.parse_args()
+
+# Set up the database
+conn = sqlite3.connect("downloads.db") # or use :memory: to put it in RAM
+cursor = conn.cursor()
+
+# Step 1 - Get the unique filenames
+sql = "SELECT DISTINCT filename FROM downloads"
+cursor.execute(sql)
+filenames = [f[0] for f in cursor.fetchall()]
+
+# Step 2 - Now get the counts for each
+counts = []
+for fn in filenames:
+    sql = "SELECT filename, count(*) FROM downloads WHERE filename='%s'" % fn
+    cursor.execute(sql)
+    data = cursor.fetchall()[0]
+    counts.append((data[1], data[0]))
+
+conn.commit()
+conn.close()
+
+# Step 3 - Print out the results
+counts = sorted(counts, reverse=True)
+print "TOTALS: "
+for (num, fn) in counts:
+    print " %5d %s" % (num, fn)
