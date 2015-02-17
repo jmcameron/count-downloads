@@ -40,10 +40,10 @@ for file in args.files:
             fsize = int(data['response_bytes_clf'])
             key = host + ' ' + stime
             if key not in file_downloads:
-                file_downloads[key] = { 'filename' : filename,
-                                        'host' : host,
-                                        'time' : stime,
-                                        'size' : fsize }
+                file_downloads[key] = {'filename': filename,
+                                       'host': host,
+                                       'time': stime,
+                                       'size': fsize}
             else:
                 if args.verbose:
                     print "Ignoring duplicate for ", key
@@ -59,8 +59,8 @@ print "Processing %d downloads" % len(file_downloads)
 
 for key, vals in file_downloads.items():
     # This syntax will insert the record if the key is unique and quietly ignore it if it is a duplicate
-    query = "INSERT OR IGNORE INTO downloads(key, filename, host, time, size) VALUES('%s', '%s', '%s', '%s', '%d')" % ( 
-        key, vals['filename'], vals['host'], vals['time'], vals['size'] )
+    query = "INSERT OR IGNORE INTO downloads(key, filename, host, time, size) VALUES('%s', '%s', '%s', '%s', '%d')" % (
+        key, vals['filename'], vals['host'], vals['time'], vals['size'])
     cursor.execute(query)
 
 conn.commit()

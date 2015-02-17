@@ -10,8 +10,6 @@ License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 import re
 import apache_log_parser
 
-# access_jmcameron.log:1538:192.185.83.208 - - [16/Feb/2015:06:43:55 +0000] 
-# "GET /attachments/updates/3.2.1/attachments-3.2.1.zip HTTP/1.1" 200 605815 "-" "-"
 
 class downloads:
     """

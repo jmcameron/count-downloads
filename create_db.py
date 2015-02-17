@@ -8,17 +8,17 @@ License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 """
 
 import sqlite3
- 
+
 conn = sqlite3.connect("downloads.db")
- 
+
 cursor = conn.cursor()
- 
+
 # create a table
 cursor.execute("""CREATE TABLE downloads
-                  (key TEXT, 
-                   filename TEXT, 
-                   host TEXT, 
-                   time TEXT, 
+                  (key TEXT,
+                   filename TEXT,
+                   host TEXT,
+                   time TEXT,
                    size INTEGER,
                    UNIQUE(key))
                """)

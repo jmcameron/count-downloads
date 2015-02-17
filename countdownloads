@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 args = parser.parse_args()
 
 # Set up the database
-conn = sqlite3.connect("downloads.db") # or use :memory: to put it in RAM
+conn = sqlite3.connect("downloads.db")
 cursor = conn.cursor()
 
 # Step 1 - Get the unique filenames
