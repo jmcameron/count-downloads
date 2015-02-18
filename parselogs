@@ -46,13 +46,14 @@ for file in args.files:
             status = int(data['status'])
             if data['response_bytes_clf'] == '-' or data['response_bytes_clf'] == '0':
                 # If no data was sent back, do not count it as a download
+                # (do not save partial downloads)
                 if args.verbose:
                     print "Ignoring zero-length download for: ", filename, host, stime
                 continue
             fsize = int(data['response_bytes_clf'])
             if status != 200:
                 if args.verbose:
-                    print "Ignoring failed download: ", filename, host, stime, fsize, status
+                    print "Ignoring failed download: ", filename, host, stime, status, fsize
                     continue
             key = host + ' ' + stime
             if key not in file_downloads:
