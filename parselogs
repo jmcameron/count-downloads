@@ -41,7 +41,12 @@ for file in args.files:
             dtime = data['time_received_datetimeobj']
             stime = dtime.strftime('%Y-%m-%d %H:%M:%S')
             status = int(data['status'])
+            if data['response_bytes_clf'] == '-':
+                # If no data was sent back, do not count it as a download
+                continue
             fsize = int(data['response_bytes_clf'])
+            if fsize == 0:
+                continue
             key = host + ' ' + stime
             if key not in file_downloads:
                 file_downloads[key] = {'filename': filename,
