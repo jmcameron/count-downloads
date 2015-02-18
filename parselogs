@@ -50,6 +50,10 @@ for file in args.files:
                     print "Ignoring zero-length download for: ", filename, host, stime
                 continue
             fsize = int(data['response_bytes_clf'])
+            if status != 200:
+                if args.verbose:
+                    print "Ignoring failed download: ", filename, host, stime, fsize, status
+                    continue
             key = host + ' ' + stime
             if key not in file_downloads:
                 file_downloads[key] = {'filename': filename,
