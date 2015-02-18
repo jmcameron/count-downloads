@@ -41,12 +41,12 @@ for file in args.files:
             dtime = data['time_received_datetimeobj']
             stime = dtime.strftime('%Y-%m-%d %H:%M:%S')
             status = int(data['status'])
-            if data['response_bytes_clf'] == '-':
+            if data['response_bytes_clf'] == '-' or data['response_bytes_clf'] == '0':
                 # If no data was sent back, do not count it as a download
+                if args.verbose:
+                    print "Ignoring zero-length download for: ", filename, host, stime
                 continue
             fsize = int(data['response_bytes_clf'])
-            if fsize == 0:
-                continue
             key = host + ' ' + stime
             if key not in file_downloads:
                 file_downloads[key] = {'filename': filename,
@@ -55,10 +55,9 @@ for file in args.files:
                                        'size': fsize}
             else:
                 if args.verbose:
-                    print "Ignoring duplicate for ", key
+                    print "Ignoring duplicate for ", filename, key
 
-            if args.verbose:
-                print "%s  %15s %s %3d %d" % (filename, host, stime, status, fsize)
+            # print "%s  %15s %s %3d %d" % (filename, host, stime, status, fsize)
 
 # Set up the database
 conn = sqlite3.connect(database_filename)
