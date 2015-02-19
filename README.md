@@ -1,7 +1,8 @@
 count-downloads
 ===============
 
-Process a set of Apache access log files and construct a list of downloads.
+Process a set of Apache access log files and construct a list of downloads
+with counts.
 
 By: Jonathan M. Cameron
 
