@@ -6,8 +6,8 @@
 # License: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 
 import os
+import time
 import datetime
-import calendar
 import pytz
 import argparse
 import sqlite3
@@ -17,6 +17,11 @@ database_filename = os.path.join(db_file_dir, 'downloads.db')
 
 # Get the timezone
 time_zone = os.environ.get('COUNT_DOWNLOADS_TZONE', 'America/Los_Angeles')
+local_tz = pytz.timezone(time_zone)
+
+# Get the time the database file was last modified (before opening it)
+db_file_last_modified = datetime.datetime(*(time.gmtime(os.path.getmtime(database_filename)))[:6])
+db_file_last_modified_local = db_file_last_modified.replace(tzinfo=pytz.utc).astimezone(local_tz)
 
 # Set up the arguments
 parser = argparse.ArgumentParser()
@@ -40,10 +45,6 @@ for fn in filenames:
     data = cursor.fetchall()[0]
     counts.append((data[1], data[0]))
 
-sql = "SELECT MAX(time) as max_time from downloads"
-cursor.execute(sql)
-max_date = cursor.fetchone()[0]
-
 conn.commit()
 conn.close()
 
@@ -55,9 +56,5 @@ for (num, fn) in counts:
     print " %5d %s" % (num, fn)
 
 print
-date = datetime.datetime.strptime(max_date + ' UTC', '%Y-%m-%d %H:%M:%S %Z')
-utc_dt = date.replace(tzinfo=pytz.timezone('UTC'))
-local_tz = pytz.timezone(time_zone)
-local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-print "Last Download: ", local_dt.strftime('%c %Z')
+print "Last database update: ", db_file_last_modified_local.strftime('%c %Z')
 print
