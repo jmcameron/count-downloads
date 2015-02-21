@@ -14,6 +14,7 @@ conn = sqlite3.connect("downloads.db")
 cursor = conn.cursor()
 
 # create a table
+# NOTE: the UNIQUE(key) is used to prevent duplicate insertions
 cursor.execute("""CREATE TABLE downloads
                   (key TEXT,
                    filename TEXT,
@@ -23,6 +24,8 @@ cursor.execute("""CREATE TABLE downloads
                    UNIQUE(key))
                """)
 
-# NOTE: the UNIQUE(key) is used to prevent duplicate insertions
+# Create an index to speed things up
+cursor.execute('CREATE UNIQUE INDEX keyIndex ON downloads (key)')
+
 
 conn.close()
