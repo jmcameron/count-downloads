@@ -32,23 +32,16 @@ args = parser.parse_args()
 conn = sqlite3.connect(database_filename)
 cursor = conn.cursor()
 
-# Step 1 - Get the unique filenames
-sql = "SELECT DISTINCT filename FROM downloads"
+# Get the counts of each filename/download
+sql = 'SELECT filename, COUNT(1) FROM downloads GROUP BY filename';
 cursor.execute(sql)
-filenames = [f[0] for f in cursor.fetchall()]
-
-# Step 2 - Now get the counts for each
-counts = []
-for fn in filenames:
-    sql = "SELECT filename, count(*) FROM downloads WHERE filename='%s'" % fn
-    cursor.execute(sql)
-    data = cursor.fetchall()[0]
-    counts.append((data[1], data[0]))
+result = cursor.fetchall()
+counts = [(data[1], data[0]) for data in result]
 
 conn.commit()
 conn.close()
 
-# Step 3 - Print out the results
+# Print out the results
 counts = sorted(counts, reverse=True)
 print
 print "TOTALS: "
