@@ -24,8 +24,8 @@ cursor.execute("""CREATE TABLE downloads
                    UNIQUE(key))
                """)
 
-# Create an index to speed things up
+# Create indices to speed things up
 cursor.execute('CREATE UNIQUE INDEX keyIndex ON downloads (key)')
-
+cursor.execute('CREATE INDEX filenameIndex ON downloads (filename)')
 
 conn.close()
