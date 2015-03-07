@@ -27,7 +27,7 @@ db_file_last_modified_local = db_file_last_modified.replace(tzinfo=pytz.utc).ast
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--betas", action='store_true', default=False,
-                    help="Report alpha, beta, downloads")
+                    help="Report alpha and beta, downloads")
 
 args = parser.parse_args()
 
