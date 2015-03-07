@@ -26,6 +26,9 @@ db_file_last_modified_local = db_file_last_modified.replace(tzinfo=pytz.utc).ast
 # Set up the arguments
 parser = argparse.ArgumentParser()
 
+parser.add_argument("--betas", action='store_true', default=False,
+                    help="Report alpha, beta, downloads")
+
 args = parser.parse_args()
 
 # Set up the database
@@ -33,7 +36,10 @@ conn = sqlite3.connect(database_filename)
 cursor = conn.cursor()
 
 # Get the counts of each filename/download
-sql = 'SELECT filename, COUNT(1) FROM downloads GROUP BY filename';
+sql = "SELECT filename, COUNT(1) FROM downloads";
+if not args.betas:
+    sql += " WHERE filename NOT LIKE '%Beta%' AND filename NOT LIKE '%Alpha'"
+sql += " GROUP BY filename"
 cursor.execute(sql)
 result = cursor.fetchall()
 counts = [(data[1], data[0]) for data in result]
